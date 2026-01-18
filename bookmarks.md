@@ -3,7 +3,7 @@ layout: default
 title: Bookmarks
 ---
 
-# Link Vault
+# Bookmark Vault
 
 ---
 
@@ -23,7 +23,6 @@ title: Bookmarks
   border-radius: 12px;
   overflow: hidden;
   background: #fff;
-  min-height: 250px;
 }
 .tweet-frame iframe {
   width: 100%;
@@ -64,10 +63,67 @@ title: Bookmarks
 .tweet-page.active { 
   display: block; 
 }
+/* Tech Links - Google Docs style */
+.link-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.link-card:hover {
+  border-color: #e06e2e;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.link-icon {
+  width: 40px;
+  height: 40px;
+  background: #e06e2e;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+.link-icon.github { background: #24292e; }
+.link-icon.medium { background: #000; }
+.link-icon.arxiv { background: #b31b1b; }
+.link-icon.hn { background: #ff6600; }
+.link-icon.notion { background: #000; }
+.link-icon.net { background: #512bd4; }
+.link-content {
+  flex: 1;
+  min-width: 0;
+}
+.link-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.link-desc {
+  color: #888;
+  font-size: 13px;
+}
+.link-source {
+  color: #e06e2e;
+  font-size: 12px;
+  margin-top: 4px;
+}
 @media (max-width: 768px) {
-  .tweet-grid {
-    grid-template-columns: 1fr;
-  }
+  .tweet-grid { grid-template-columns: 1fr; }
 }
 </style>
 
@@ -2569,9 +2625,7 @@ title: Bookmarks
   const currentPageSpan = document.getElementById('current-page');
   
   function show(idx) {
-    pages.forEach((p, i) => {
-      p.classList.toggle('active', i === idx);
-    });
+    pages.forEach((p, i) => p.classList.toggle('active', i === idx));
     render(idx);
     currentPageSpan.textContent = idx + 1;
     document.getElementById('twitter-section').scrollIntoView({behavior: 'smooth', block: 'start'});
@@ -2579,7 +2633,6 @@ title: Bookmarks
   
   function render(idx) {
     nav.innerHTML = '';
-    
     const prev = document.createElement('button');
     prev.textContent = '← Previous';
     prev.disabled = idx === 0;
@@ -2612,165 +2665,169 @@ title: Bookmarks
 
 ---
 
-## Tech & Engineering
+## Tech & Reading
 
-<ul class="link-list">
-<li><a href="https://music.youtube.com/watch?v=EdOrt2q9ibc&si=B3RVnVOzNE4oCH9T" target="_blank">music.youtube.com</a></li>
-<li><a href="https://music.youtube.com/watch?v=sPHRoZFnEkU&feature=share" target="_blank">music.youtube.com</a></li>
-<li><a href="https://www.getdbt.com/about-us/careers#roles" target="_blank">getdbt.com</a></li>
-<li><a href="https://github.com/abshkbh/arrakis?s=08" target="_blank">github.com</a></li>
-<li><a href="https://jobs.bendingspoons.com/?utm_source=bendingspoons&utm_medium=website&utm_campaign=careers&utm_content=hero_CTA&utm_term=static&s=08" target="_blank">jobs.bendingspoons.com</a></li>
-<li><a href="https://arxiv.org/pdf/2404.17625?s=08" target="_blank">arxiv.org</a></li>
-<li><a href="https://www.linkedin.com/jobs/view/4189885526" target="_blank">linkedin.com</a></li>
-<li><a href="https://www.linkedin.com/jobs/view/4183866592" target="_blank">linkedin.com</a></li>
-<li><a href="https://sensehr.sensehq.com/careers/jobs/129" target="_blank">sensehr.sensehq.com</a></li>
-<li><a href="https://www.nirvanatech.com/careers" target="_blank">nirvanatech.com</a></li>
-<li><a href="https://careers.tiktok.com/referral/tiktok/m/position?token=MzsxNzA2Mjg4MTc1MzM2OzcwMzMxMTk4MTczNDczNjg0ODU7MDsy" target="_blank">careers.tiktok.com</a></li>
-<li><a href="https://docs.google.com/forms/u/0/d/1vQCPA3mA7antTPYG2GXI6l5WQxuwzdDMfwOd4IDOoy4/preview" target="_blank">docs.google.com</a></li>
-<li><a href="https://careers.servicenow.com/jobs/744000035089180/sr-software-engineer/" target="_blank">careers.servicenow.com</a></li>
-<li><a href="https://huggingface.co/agents-course" target="_blank">huggingface.co</a></li>
-<li><a href="https://exotel.com/careers/#op-652583-se3-gen-ai" target="_blank">exotel.com</a></li>
-<li><a href="https://github.com/Tencent/HunyuanVideo" target="_blank">github.com</a></li>
-<li><a href="https://youtu.be/L3mX36og08U?si=pYFv4dtLmw6JXs-o" target="_blank">youtu.be</a></li>
-<li><a href="https://docs.google.com/forms/d/e/1FAIpQLSftcO9dAfrJfWt1x46fiHur8CteZ48gdI1YLonuhKZl4BOlQw/viewform?edit2=2_ABaOnucC6cfa9R1bFjWq0K3XLvInGYuxumixv-_fCEEKnRBkHJLJrH7Pga3ak3lshKnPJ90" target="_blank">docs.google.com</a></li>
-<li><a href="https://github.com/skd1993/instagram-saved-scraper" target="_blank">github.com</a></li>
-<li><a href="https://youtube.com/shorts/9MTyA9GZyCg?si=sk4qjgyFEwoUzCOf" target="_blank">youtube.com</a></li>
-<li><a href="https://docs.google.com/forms/d/e/1FAIpQLSdkdYkpEvrRSFuw4Dn6nu5hzUzxtMusutbQVOG-LcpjdgZ0SA/viewform" target="_blank">docs.google.com</a></li>
-<li><a href="https://youtube.com/shorts/E9KmAN6FslY?si=B7KN8GmhVlyJYwHi" target="_blank">youtube.com</a></li>
-<li><a href="https://www.kognitos.com/careers/#apply-now" target="_blank">kognitos.com</a></li>
-<li><a href="https://careers.adyen.com/vacancies/5681461-software-developer-network-automation" target="_blank">careers.adyen.com</a></li>
-<li><a href="https://intcareers-purestorage.icims.com/jobs/5073/developer%2c-portworx/job" target="_blank">intcareers-purestorage.icims.com</a></li>
-<li><a href="https://youtu.be/JTLI_nZ56Yg?si=jfCCsLTeQmGl0xS_" target="_blank">youtu.be</a></li>
-<li><a href="https://www.tessell.com/careers/jobs?gh_jid=4051041006" target="_blank">tessell.com</a></li>
-<li><a href="https://github.com/microsoft/aici?s=08" target="_blank">github.com</a></li>
-<li><a href="https://github.com/andrei-punko/java-interview-coding/tree/master/src/main/java/by/andd3dfx/common" target="_blank">github.com</a></li>
-<li><a href="https://www.revolut.com/careers/position/software-engineer-python-7d3a7425-fe1a-456c-9dde-d19aba0cde88/" target="_blank">revolut.com</a></li>
-<li><a href="https://www.atlassian.com/company/careers/details/11267" target="_blank">atlassian.com</a></li>
-<li><a href="https://careers.salesforce.com/en/jobs/jr209562/software-engineering-smts-hyderabad/" target="_blank">careers.salesforce.com</a></li>
-<li><a href="https://github.com/HamaWhiteGG/langchain-java/blob/main/langchain-core/src/main/java/com/hw/langchain/embeddings/ollama/OllamaEmbeddings.java" target="_blank">github.com</a></li>
-<li><a href="https://github.com/gopalbala" target="_blank">github.com</a></li>
-<li><a href="https://github.com/JohnCrickett/SystemDesign/tree/main/engineering-blogs?s=08" target="_blank">github.com</a></li>
-<li><a href="https://github.com/kamranahmedse/design-patterns-for-humans?s=08" target="_blank">github.com</a></li>
-<li><a href="https://github.com/TengHu/ActionWeaver" target="_blank">github.com</a></li>
-<li><a href="https://www.linkedin.com/jobs/view/3673090665" target="_blank">linkedin.com</a></li>
-<li><a href="https://www.linkedin.com/posts/alexcharrier_datadog-is-looking-for-software-engineers-activity-7122929030789509121-Y0Rl?utm_source=share&utm_medium=member_android" target="_blank">linkedin.com</a></li>
-<li><a href="https://youtube.com/@secretweapons1199?si=HTFdqdpw4QUj5zkR" target="_blank">youtube.com</a></li>
-<li><a href="https://github.com/kantord/SeaGOAT" target="_blank">github.com</a></li>
-<li><a href="https://docs.google.com/document/d/e/2PACX-1vQD8IlBotGdBxp3BnXkSjk8bNZlPV_0EH9ZA6wHd5dNf-BLSiwXUinvgv8ZoBEnNyTCF-chWO30NRw0/pub#h.39xudaq6en7t" target="_blank">docs.google.com</a></li>
-<li><a href="https://docs.google.com/spreadsheets/d/1x4PaB_mvrj-jF8ej3A1cbkiIZX_WPIPAj9Ni0ZNgB64/htmlview" target="_blank">docs.google.com</a></li>
-<li><a href="https://arxiv.org/pdf/2305.12517.pdf" target="_blank">arxiv.org</a></li>
-<li><a href="https://music.youtube.com/playlist?list=PLv0g-eTvSU6Huy3kAHVzQO7w6FeGR_QiA" target="_blank">music.youtube.com</a></li>
-<li><a href="https://github.com/aaronn/gptfile" target="_blank">github.com</a></li>
-<li><a href="https://youtube.com/shorts/1VmkKqxwkO4?feature=share" target="_blank">youtube.com</a></li>
-<li><a href="https://medium.com/starbugs/consistency-between-cache-and-database-part-2-e28fc7f8a7c3" target="_blank">medium.com</a></li>
-<li><a href="https://youtube.com/shorts/wH4fW-Z2vO0?feature=share" target="_blank">youtube.com</a></li>
-<li><a href="https://youtu.be/Nnuj-tBkQUc" target="_blank">youtu.be</a></li>
-</ul>
+<p class="small-text">20 links</p>
 
----
-
-## Other Links
-
-<ul class="link-list">
-<li><a href="https://www.instagram.com/reel/DOhYJtyCehq/?igsh=MTE4YzFndGJsZDQ5Yg==" target="_blank">instagram.com</a></li>
-<li><a href="https://www.instagram.com/reel/DTKgxYrjCty/?igsh=aXdkZXptNHlwaGQw" target="_blank">instagram.com</a></li>
-<li><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html" target="_blank">dave.cheney.net</a></li>
-<li><a href="https://thewrap.investkaroindia.in/members-area/my/my-account" target="_blank">thewrap.investkaroindia.in</a></li>
-<li><a href="https://s2.dev/?s=08" target="_blank">s2.dev</a></li>
-<li><a href="https://pastebin.com/F7gfhCw7" target="_blank">pastebin.com</a></li>
-<li><a href="https://www.linkedin.com/redir/redirect/?url=https%3A%2F%2Fjob-boards%2Egreenhouse%2Eio%2Ftubitv%2Fjobs%2F7316074&urlhash=sAtx&isSdui=true" target="_blank">linkedin.com</a></li>
-<li><a href="https://www.nestaway.com/hyderabad/gated-community/srilatha-nilayam-society-flats-for-rent-in-puppal-guda" target="_blank">nestaway.com</a></li>
-<li><a href="https://exa.ai/websets?s=08" target="_blank">exa.ai</a></li>
-<li><a href="https://www.samsara.com/blog/inside-samsaras-bengaluru-expansion-new-r-and-d-hub-powering-innovation?campaign_name=India:%20Content%20Campaign&account_name=Samsara&utm_source=LinkedIn%20talent%20ads" target="_blank">samsara.com</a></li>
-<li><a href="https://www.instagram.com/reel/DM2vozEPvZz/?igsh=MWs2YnprbnloNGox" target="_blank">instagram.com</a></li>
-<li><a href="https://msretro.com/?utm_medium=paid&utm_id=120229767268480492&utm_content=120232424815250492&utm_term=120229767268470492&utm_campaign=120229767268480492&fbclid=PAZXh0bgNhZW0BMABhZGlkAasmwN3W1VwBp5xKuLpcyBQvra2PlaCxRP0smw3xuKmKYtS79gds8UyCICk0od_K64BTCbA8_aem_-Htw755SLyfjt6Y700A1nA&utm_source=facebook&campaign_id=120229767268480492&ad_id=120232424815250492" target="_blank">msretro.com</a></li>
-<li><a href="https://jerseyvault.in/checkouts/cn/hWN0khHjLbBJXBtJxN0reriu?utm_source=facebook&utm_medium=paid&utm_campaign=120227232733250506&utm_term=120227232733410506&utm_content=120227232734510506&utm_id=120227232733250506&fbclid=PAZXh0bgNhZW0BMABhZGlkAasmAkb01IoBp4TCgGhDGzAQ5PrhvetQWhogGhVp1T-gVdyfGkvyHzZj2IOJRX1-c3Qu5cXL_aem_Z6I5KTRV37NdLW1QUgp03Q" target="_blank">jerseyvault.in</a></li>
-<li><a href="https://buffer.com/journey#open-roles" target="_blank">buffer.com</a></li>
-<li><a href="https://job-boards.eu.greenhouse.io/ziina/jobs/4599426101" target="_blank">job-boards.eu.greenhouse.io</a></li>
-<li><a href="https://www.emprego.pt/en/jobs/show/30590254250914360348284341776" target="_blank">emprego.pt</a></li>
-<li><a href="https://in.trip.com/m/hotels/detail/?hotelId=106427001&subStamp=408&checkIn=2025-05-19&checkOut=2025-05-22&adult=2&children=0&ages=&types=&crn=1&travelpurpose=0&UniqueKey=H4sIAAAAAAAAAOO6z8jFJsAoweTAKMTEwSh1gZGjbcPlXjYhRiODflGLnjZGR2MQiGxz8HxYJbLO_fhihwCeSYzinAxA0NB62EEQJL3560EHJ2aObr9JjJKYMhqMeOSYwHIzGH8-uW-0kfH64gJbLuUKhx2MTCcYpzktYHp_faXpLiYWjoWvGA8xsXFs-yotwXKKieESE8MtJoZHTAyvmBg-MTH8YgIZ0sTM0MXMMImZjWPSck4JllnMDIuYGaT4jCxSjEzMDFLTUixSTSwUhDRerfh0gM1IaRIjk6ffKUYpQ3MTM3MDIwNTCwtzEz1j0-Sk7PKyYkefME8rZilGNw_mIDZnU2NXZ8coLS5mT78gwQ0KZyNM5m61lwLxFGE8LRDPEMZLYk3N0_X0y5glVMDYxcghwOjBGMFYwfiKEaTqB9i3AEMtJU58AQAA&roomKey=&masterhotelid_tracelogid=28d2460efd8e48&cityId=121819&listScene=0&recommendFilter=0&fromPageId=10320671706&allSelectedFilters=5$1~7$2~16$5~17$1~77$91~80$80%7C0%7C1!0&priceCurr=INR&trip_sub1=6b36b72d-2e20-474b-9bae-9e1bed338db8&isFirstEnterDetailPage=T&fgt=1&display=exavg&fromList=1" target="_blank">in.trip.com</a></li>
-<li><a href="https://in.trip.com/m/hotels/w/list/searchresults?Allianceid=870102&sid=87262533&city=94090&hotelid=23114786&locale=en_IN&checkin=2025-05-19&checkout=2025-05-22&ouid=&shoppingid=5f849eaa2b6811f08ebd168c95423aea&roomquantity=&minprice=&mproom=1456830994&starlist=&rate=&amenty=&breakfast=&bookPolicy=&adult=2&ages=&children=0&crn=1&fgt=1&is_sp=Q1G&language=enin&swid=0&trip_sub1=6b36b72d-2e20-474b-9bae-9e1bed338db8&stand=H4sIAAAAAAAA_wAOAfH-Cm4KAhgCEgQIARAAGmIIkvTVtgUSATIYADA7OPMRmAGi6IILqAEBuAECwAEA0QHsUbgexdC5QOEBCtejcF2v1UDoAdvi5HWIAmuJBAAAAAAAAAAAoAQGqgQMCNsPERSuR-F64rdAoQUAAAAAAAAAABogNWY4NDllYWEyYjY4MTFmMDhlYmQxNjhjOTU0MjNhZWEgBCi1r-7ABkgDUgYwMjlmY2NaHAoDSU5SEZKumXyzzbU_GgNJTlIhkq6ZfLPNtT9iBWVuX0lOaJoScAF4AIoBB0gBeADIAQGqAQcKAzAyMRAC8gEjNWY4NDllYWEyYjY4MTFmMDhlYmQxNjhjOTU0MjNhZWFfMTKSAgEyAAAA__8BAAD__1eqs8IOAQAA&ttm-busi-dept=hotel&ttm-module=marketing&ttm-medium=h5" target="_blank">in.trip.com</a></li>
-<li><a href="https://b7more.in/collections/sherwani-for-men?utm_source=ig&utm_medium=Instagram_Reels&utm_campaign=IM_Interest_Open&utm_content=IM_Mix_Carousel2&utm_id=120220725977340458_v2_s07&utm_term=120220725977370458&fbclid=PAZXh0bgNhZW0BMABhZGlkAasdXfFZhvoBp3GIkXcwmf2F0tRJU4mgyKsaYNXP45-Uz9SIWUR_qXz6oQT0T8i0lHUA_m8m_aem_VRZPwgY2UEpWWzv2MXRvQA&campaign_id=120220725977340458&ad_id=120222102386260458" target="_blank">b7more.in</a></li>
-<li><a href="https://cobalt.tools/?s=08" target="_blank">cobalt.tools</a></li>
-<li><a href="http://cred.club/rabbit-hole" target="_blank">cred.club</a></li>
-<li><a href="https://www.reddit.com/r/leetcode/s/ZtaRUWJcsD" target="_blank">reddit.com</a></li>
-<li><a href="https://zolve.freshteam.com/jobs/sjCjMLZ8oFiF/sde-2-backend-developer" target="_blank">zolve.freshteam.com</a></li>
-<li><a href="https://jobs.bytedance.com/referral/position?token=MzsxNzM1MjE2NTg5MTY3OzcwMzMxMTk4MTczNDczNjg0ODU7MDsx" target="_blank">jobs.bytedance.com</a></li>
-<li><a href="https://dsp.prng.co/hLRdnpb?target=linkedin&utm_source=linkedin&jobPipeline=LinkedInJobPostings" target="_blank">dsp.prng.co</a></li>
-<li><a href="https://leetcode.com/discuss/compensation/5318457/India-Companies-Paying-70LPA%2B-for-SDE2-(L4)-Roles/?page=2" target="_blank">leetcode.com</a></li>
-<li><a href="https://qrcodes.pro/va8ddq" target="_blank">qrcodes.pro</a></li>
-<li><a href="https://acrobat.adobe.com/id/urn:aaid:sc:AP:d4eaf971-4422-47e2-b900-8c53d2978ed0" target="_blank">acrobat.adobe.com</a></li>
-<li><a href="https://ats.rippling.com/rippling/jobs/e437752c-7e0a-457c-9939-2e8ba3d7a8fd" target="_blank">ats.rippling.com</a></li>
-<li><a href="https://www.instagram.com/reel/DFb6ku0xdzz/?igsh=bmJqMzB2cjIycjcy" target="_blank">instagram.com</a></li>
-<li><a href="https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/275518/?utm_medium=jobshare&utm_source=External+Job+Share" target="_blank">eeho.fa.us2.oraclecloud.com</a></li>
-<li><a href="https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/276452/?utm_medium=jobshare&utm_source=External+Job+Share" target="_blank">eeho.fa.us2.oraclecloud.com</a></li>
-<li><a href="https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/256616/?utm_medium=jobshare&utm_source=External+Job+Share" target="_blank">eeho.fa.us2.oraclecloud.com</a></li>
-<li><a href="https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/263160/?utm_medium=jobshare&utm_source=External+Job+Share" target="_blank">eeho.fa.us2.oraclecloud.com</a></li>
-<li><a href="https://jalammar.github.io/illustrated-transformer/" target="_blank">jalammar.github.io</a></li>
-<li><a href="https://www.google.com/travel/flights/s/x8cMomFA3Pn1rowp8" target="_blank">google.com</a></li>
-<li><a href="https://pin.it/4UXc2vt87" target="_blank">pin.it</a></li>
-<li><a href="https://acrobat.adobe.com/id/urn:aaid:sc:AP:f571fad8-0b77-4f2e-8ea0-c743cf669280" target="_blank">acrobat.adobe.com</a></li>
-<li><a href="https://www.nobroker.in/property/buy/2-bhk-apartment-for-sale-in-epic-yashada-realty-group-pune/8a9ffe8287b8841c0187b91a6bea52e6/detail?nbFr=list-buy" target="_blank">nobroker.in</a></li>
-<li><a href="https://rapidapi.com/freshdata-freshdata-default/api/fresh-linkedin-profile-data" target="_blank">rapidapi.com</a></li>
-<li><a href="https://open.spotify.com/episode/7iJrxv00vKRD6Uvhv7Rwv8?si=hJQW3odsQFSIyOs6z1-8Xg" target="_blank">open.spotify.com</a></li>
-<li><a href="https://ludwigabap.bearblog.dev/on-becoming-competitive-when-joining-a-new-company/?s=08" target="_blank">ludwigabap.bearblog.dev</a></li>
-<li><a href="https://pastebin.com/YSUJukKb" target="_blank">pastebin.com</a></li>
-<li><a href="https://pastebin.com/tkAqEGQr" target="_blank">pastebin.com</a></li>
-<li><a href="https://blog.withmantle.com/code-conversion-using-ai/" target="_blank">blog.withmantle.com</a></li>
-<li><a href="https://in.bookmyshow.com/tiny/re32LAuvxp" target="_blank">in.bookmyshow.com</a></li>
-<li><a href="https://looksmax.ai" target="_blank">looksmax.ai</a></li>
-<li><a href="https://www.proptiger.com/guide/post/how-to-cancel-flat-booking" target="_blank">proptiger.com</a></li>
-<li><a href="https://stripe.com/jobs/listing/software-engineer-orchestration/5914226?gh_src=73vnei" target="_blank">stripe.com</a></li>
-<li><a href="https://voters.eci.gov.in/login" target="_blank">voters.eci.gov.in</a></li>
-<li><a href="https://lablab.ai/event/advanced-rag-hackathon?utm_medium=paid&utm_source=meta_ads&utm_campaign=advanced_rag_hackathon&utm_term=SEA&utm_content=makeshift&fbclid=PAAabelZgEVerJiDKK41KoBvPn1sdCJeGTskK1YpLQSfoItGcxZaJ93eW6ymM_aem_ATX1WlGW02_5AcQbi9WglteY3tWti-Tdvdxh7TBkk6KFrfTIXy3Yr0-gAyJ2GRTcn5dY9mNIZItK9Gr-ejr8BhSG" target="_blank">lablab.ai</a></li>
-<li><a href="https://www.perplexity.ai/search/as-per-rera-YErISQLVT3aAwczqbDZ65A" target="_blank">perplexity.ai</a></li>
-<li><a href="https://realty.economictimes.indiatimes.com/news/regulatory/banks-cant-be-converted-into-builder-to-ensure-completion-of-real-estate-project-hc/98720888" target="_blank">realty.economictimes.indiatimes.com</a></li>
-<li><a href="https://stackoverflow.blog/2020/11/25/how-to-write-an-effective-developer-resume-advice-from-a-hiring-manager/" target="_blank">stackoverflow.blog</a></li>
-<li><a href="https://optiver.com/working-at-optiver/career-opportunities/6793838002/#apply_section" target="_blank">optiver.com</a></li>
-<li><a href="https://www.instagram.com/reel/C5GU7LQS7Zl/?igsh=NzVheWxqMHZwdmN0" target="_blank">instagram.com</a></li>
-<li><a href="https://microsoft.github.io/code-with-engineering-playbook/developer-experience/" target="_blank">microsoft.github.io</a></li>
-<li><a href="https://answersai.com/?s=08" target="_blank">answersai.com</a></li>
-<li><a href="https://oneapp.karat.io/scheduling/8747475bf8e55ec1d24fe27a38c3aafd970ed484ae802d1475f806f9a25b4b8f" target="_blank">oneapp.karat.io</a></li>
-<li><a href="https://jobs.ashbyhq.com/ema/eb62df31-0370-447f-8cc6-707e79cbc9fa?s=08" target="_blank">jobs.ashbyhq.com</a></li>
-<li><a href="https://razorpay.com/jobs/jobs-all/detail/?gh_jid=4371710005" target="_blank">razorpay.com</a></li>
-<li><a href="https://cyberleads.com/?s=08" target="_blank">cyberleads.com</a></li>
-<li><a href="https://optiver.com/working-at-optiver/career-opportunities/6793838002/" target="_blank">optiver.com</a></li>
-<li><a href="https://drive.google.com/file/d/1VoT1lxQCJ34pc8PV7d6Bm-Ev3lN39SAL/view?usp=sharing" target="_blank">drive.google.com</a></li>
-<li><a href="https://leetcode.com/discuss/interview-question/object-oriented-design/536440/lld-design-a-json-parser-from-scratch" target="_blank">leetcode.com</a></li>
-<li><a href="https://www.btbytes.com/posts/llm-api-design.html?s=08" target="_blank">btbytes.com</a></li>
-<li><a href="https://jobs.lever.co/atlan/55269be2-e174-48d4-867d-35540475be1c" target="_blank">jobs.lever.co</a></li>
-<li><a href="https://www.workatastartup.com/jobs/62929" target="_blank">workatastartup.com</a></li>
-<li><a href="https://www.ycombinator.com/companies/mixrank/jobs" target="_blank">ycombinator.com</a></li>
-<li><a href="https://hlfshell.ai/posts/llms-and-robotics-papers-2023/" target="_blank">hlfshell.ai</a></li>
-<li><a href="https://aaptak.com/FrmBillDetails/FrmBillDetails?shortCode=NOFH" target="_blank">aaptak.com</a></li>
-<li><a href="https://pinokio.computer/" target="_blank">pinokio.computer</a></li>
-<li><a href="https://www.linkedin.com/company/xflowpay/" target="_blank">linkedin.com</a></li>
-<li><a href="https://avi.im/blag/2022/py-caskdb/?s=08" target="_blank">avi.im</a></li>
-<li><a href="https://avi.im/blag/2015/multiple-git-emails/?s=08" target="_blank">avi.im</a></li>
-<li><a href="https://e2b.dev/blog/microsoft-s-autogen" target="_blank">e2b.dev</a></li>
-<li><a href="https://grnh.se/7428fd4a5us" target="_blank">grnh.se</a></li>
-<li><a href="https://www.reddit.com/r/VietNam/s/AkJ1JA77uE" target="_blank">reddit.com</a></li>
-<li><a href="https://www.threads.net/@vishvanands/post/CygpgKAPCXt1-8uNSQHYy43NZmhy0efaUcnoDE0" target="_blank">threads.net</a></li>
-<li><a href="https://boards.greenhouse.io/runwayml/jobs/4328782005" target="_blank">boards.greenhouse.io</a></li>
-<li><a href="https://reddit.com/u/FAP_AI/s/Wm4aPZcEgs" target="_blank">reddit.com</a></li>
-<li><a href="https://www.linkedin.com/in/dmed256/" target="_blank">linkedin.com</a></li>
-<li><a href="https://supaboxai.com/?s=08" target="_blank">supaboxai.com</a></li>
-<li><a href="https://blog.eleuther.ai/transformer-math/?s=08" target="_blank">blog.eleuther.ai</a></li>
-<li><a href="https://www.ycombinator.com/companies/rosebud-ai-pixelvibe/jobs/YzPvNKo-llms-and-general-ai-researcher-engineer" target="_blank">ycombinator.com</a></li>
-<li><a href="https://deskerasite.notion.site/Hackathon-Deskera-15410cca86f7471b84cd2d3d2b7f35ed" target="_blank">deskerasite.notion.site</a></li>
-<li><a href="https://ootytourism.co.in/sightseeing-places-to-visit-in-ooty" target="_blank">ootytourism.co.in</a></li>
-<li><a href="https://build-your-own.org/database/" target="_blank">build-your-own.org</a></li>
-<li><a href="https://python.langchain.com/en/latest/modules/agents/tools/examples/wolfram_alpha.html" target="_blank">python.langchain.com</a></li>
-<li><a href="https://architecturenotes.co/subscribe/?s=08" target="_blank">architecturenotes.co</a></li>
-<li><a href="https://cleartax.in/g/terms" target="_blank">cleartax.in</a></li>
-<li><a href="https://cleartax.in/s/gst-guide-introduction" target="_blank">cleartax.in</a></li>
-<li><a href="https://cleartax.in/s/income-tax" target="_blank">cleartax.in</a></li>
-<li><a href="https://www.indiacode.nic.in/bitstream/123456789/2435/1/a1961-43.pdf" target="_blank">indiacode.nic.in</a></li>
-<li><a href="https://discord.com/invite/peBrCpheKE" target="_blank">discord.com</a></li>
-<li><a href="https://e2eml.school/transformers.html" target="_blank">e2eml.school</a></li>
-<li><a href="https://www.indiatimes.com/technology/news/stanford-researchers-cheap-ai-model-beats-chatgpt-596501.html" target="_blank">indiatimes.com</a></li>
-<li><a href="https://aeroindia.evenuefy.com/dashboard/e-badge/63e9b2a499e2f500688713cc" target="_blank">aeroindia.evenuefy.com</a></li>
-<li><a href="https://www.quora.com/Where-does-bewakoof-and-the-souled-store-gets-their-t-shirts-manufactured-Whats-the-actual-cost-Does-it-cost-to-print-them?ch=3&oid=27935977&share=122daee1&srid=aNXN&target_type=question" target="_blank">quora.com</a></li>
-<li><a href="https://www.facebook.com/cnbcawaaz/videos/1891636124224077/" target="_blank">facebook.com</a></li>
-<li><a href="https://www.facebook.com/cnbcawaaz/videos/1891628654224824/" target="_blank">facebook.com</a></li>
-</ul>
+<div class="tech-links">
+<a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html" target="_blank" class="link-card">
+  <div class="link-icon net">.N</div>
+  <div class="link-content">
+    <div class="link-title">practical-go presentations qcon-china.html</div>
+    <div class="link-desc">Article</div>
+    <div class="link-source">dave.cheney.net</div>
+  </div>
+</a>
+<a href="https://github.com/abshkbh/arrakis?s=08" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">abshkbh/arrakis</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://arxiv.org/pdf/2404.17625?s=08" target="_blank" class="link-card">
+  <div class="link-icon arxiv">Ar</div>
+  <div class="link-content">
+    <div class="link-title">Paper 2404.17625</div>
+    <div class="link-desc">Academic Paper</div>
+    <div class="link-source">arXiv</div>
+  </div>
+</a>
+<a href="https://github.com/Tencent/HunyuanVideo" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">Tencent/HunyuanVideo</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://github.com/skd1993/instagram-saved-scraper" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">skd1993/instagram-saved-scraper</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://github.com/microsoft/aici?s=08" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">microsoft/aici</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://github.com/andrei-punko/java-interview-coding/tree/master/src/main/java/by/andd3dfx/common" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">andrei-punko/java-interview-coding</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://www.ycombinator.com/companies/mixrank/jobs" target="_blank" class="link-card">
+  <div class="link-icon hn">YC</div>
+  <div class="link-content">
+    <div class="link-title">Mixrank</div>
+    <div class="link-desc">YC Company</div>
+    <div class="link-source">Hacker News</div>
+  </div>
+</a>
+<a href="https://github.com/HamaWhiteGG/langchain-java/blob/main/langchain-core/src/main/java/com/hw/langchain/embeddings/ollama/OllamaEmbeddings.java" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">HamaWhiteGG/langchain-java</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://github.com/gopalbala" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">gopalbala</div>
+    <div class="link-desc">GitHub Link</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://github.com/JohnCrickett/SystemDesign/tree/main/engineering-blogs?s=08" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">JohnCrickett/SystemDesign</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://github.com/kamranahmedse/design-patterns-for-humans?s=08" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">kamranahmedse/design-patterns-for-humans</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://github.com/TengHu/ActionWeaver" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">TengHu/ActionWeaver</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://www.threads.net/@vishvanands/post/CygpgKAPCXt1-8uNSQHYy43NZmhy0efaUcnoDE0" target="_blank" class="link-card">
+  <div class="link-icon net">.N</div>
+  <div class="link-content">
+    <div class="link-title">@vishvanands post CygpgKAPCXt1-8uNSQHYy43NZmhy0efa</div>
+    <div class="link-desc">Article</div>
+    <div class="link-source">threads.net</div>
+  </div>
+</a>
+<a href="https://github.com/kantord/SeaGOAT" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">kantord/SeaGOAT</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://www.ycombinator.com/companies/rosebud-ai-pixelvibe/jobs/YzPvNKo-llms-and-general-ai-researcher-engineer" target="_blank" class="link-card">
+  <div class="link-icon hn">YC</div>
+  <div class="link-content">
+    <div class="link-title">Rosebud Ai Pixelvibe</div>
+    <div class="link-desc">YC Company</div>
+    <div class="link-source">Hacker News</div>
+  </div>
+</a>
+<a href="https://deskerasite.notion.site/Hackathon-Deskera-15410cca86f7471b84cd2d3d2b7f35ed" target="_blank" class="link-card">
+  <div class="link-icon notion">N</div>
+  <div class="link-content">
+    <div class="link-title">Notion Document</div>
+    <div class="link-desc">Shared Page</div>
+    <div class="link-source">Notion</div>
+  </div>
+</a>
+<a href="https://arxiv.org/pdf/2305.12517.pdf" target="_blank" class="link-card">
+  <div class="link-icon arxiv">Ar</div>
+  <div class="link-content">
+    <div class="link-title">Paper 2305.12517</div>
+    <div class="link-desc">Academic Paper</div>
+    <div class="link-source">arXiv</div>
+  </div>
+</a>
+<a href="https://github.com/aaronn/gptfile" target="_blank" class="link-card">
+  <div class="link-icon github">GH</div>
+  <div class="link-content">
+    <div class="link-title">aaronn/gptfile</div>
+    <div class="link-desc">Repository</div>
+    <div class="link-source">GitHub</div>
+  </div>
+</a>
+<a href="https://medium.com/starbugs/consistency-between-cache-and-database-part-2-e28fc7f8a7c3" target="_blank" class="link-card">
+  <div class="link-icon medium">M</div>
+  <div class="link-content">
+    <div class="link-title">Consistency Between Cache And Database Part 2 E28Fc7F8A7C3</div>
+    <div class="link-desc">Blog Post</div>
+    <div class="link-source">Medium</div>
+  </div>
+</a>
+</div>

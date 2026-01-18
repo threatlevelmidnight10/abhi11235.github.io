@@ -8,19 +8,27 @@ def classify_link(link):
     if 'twitter.com' in link_lower or 'x.com' in link_lower:
         return 'twitter'
     
+    # Only these tech domains - rest ignored
     tech_domains = [
-        'github.com', 'stackoverflow.com', 'arxiv.org', 'huggingface.co', 
-        'dev.to', 'medium.com', 'hashnode.com', 'kaggle.com', 
-        'news.ycombinator.com', 'python.org', 'docs.google.com', 
-        'youtube.com', 'youtu.be',
-        'linkedin.com/jobs', 'linkedin.com/posts', 'careers'
+        'github.com',
+        'news.ycombinator.com',
+        'ycombinator.com',
+        'medium.com',
+        'arxiv.org',
+        'notion.site',
+        'notion.so',
     ]
+    
+    # Also include *.net domains
+    if '.net' in link_lower:
+        return 'tech'
     
     for domain in tech_domains:
         if domain in link_lower:
             return 'tech'
-            
-    return 'misc'
+    
+    # Everything else is ignored
+    return 'ignore'
 
 def extract_tweet_id(url):
     """Extract tweet ID from URL."""
@@ -28,6 +36,84 @@ def extract_tweet_id(url):
     if match:
         return match.group(1)
     return None
+
+def extract_link_info(url):
+    """Extract meaningful display info from URL."""
+    info = {
+        'url': url,
+        'title': '',
+        'description': '',
+        'source': ''
+    }
+    
+    # GitHub
+    if 'github.com' in url:
+        match = re.search(r'github\.com/([^/]+)/([^/?#]+)', url)
+        if match:
+            info['source'] = 'GitHub'
+            info['title'] = f"{match.group(1)}/{match.group(2)}"
+            info['description'] = 'Repository'
+        else:
+            info['source'] = 'GitHub'
+            info['title'] = url.split('github.com/')[-1].split('?')[0][:50]
+            info['description'] = 'GitHub Link'
+    
+    # Medium
+    elif 'medium.com' in url:
+        info['source'] = 'Medium'
+        # Try to extract article title from URL
+        parts = url.split('/')
+        if len(parts) > 3:
+            slug = parts[-1].split('?')[0]
+            info['title'] = slug.replace('-', ' ').title()[:60]
+        else:
+            info['title'] = 'Article'
+        info['description'] = 'Blog Post'
+    
+    # arXiv
+    elif 'arxiv.org' in url:
+        info['source'] = 'arXiv'
+        match = re.search(r'(\d+\.\d+)', url)
+        if match:
+            info['title'] = f"Paper {match.group(1)}"
+        else:
+            info['title'] = 'Research Paper'
+        info['description'] = 'Academic Paper'
+    
+    # Hacker News / YC
+    elif 'ycombinator.com' in url or 'news.ycombinator.com' in url:
+        info['source'] = 'Hacker News'
+        if 'item?id=' in url:
+            match = re.search(r'id=(\d+)', url)
+            info['title'] = f"Discussion #{match.group(1)}" if match else 'Discussion'
+        elif '/companies/' in url:
+            info['title'] = url.split('/companies/')[-1].split('/')[0].replace('-', ' ').title()
+            info['description'] = 'YC Company'
+        else:
+            info['title'] = 'Hacker News'
+        info['description'] = info['description'] or 'HN Link'
+    
+    # Notion
+    elif 'notion' in url:
+        info['source'] = 'Notion'
+        info['title'] = 'Notion Document'
+        info['description'] = 'Shared Page'
+    
+    # .net domains
+    elif '.net' in url:
+        domain = re.search(r'https?://(?:www\.)?([^/]+)', url)
+        info['source'] = domain.group(1) if domain else 'Web'
+        path = url.split(info['source'])[-1] if info['source'] else ''
+        info['title'] = path.split('?')[0].replace('/', ' ').strip()[:50] or 'Link'
+        info['description'] = 'Article'
+    
+    else:
+        domain = re.search(r'https?://(?:www\.)?([^/]+)', url)
+        info['source'] = domain.group(1) if domain else 'Web'
+        info['title'] = 'Link'
+        info['description'] = ''
+    
+    return info
 
 def generate_site():
     input_file = './cht_history/_chat180626.txt'
@@ -49,22 +135,20 @@ def generate_site():
 
     twitter_links = []
     tech_links = []
-    misc_links = []
 
     for link in unique_links:
         category = classify_link(link)
         if category == 'twitter':
             tweet_id = extract_tweet_id(link)
-            if tweet_id:  # Only include if we can extract the ID
+            if tweet_id:
                 twitter_links.append((link, tweet_id))
         elif category == 'tech':
-            tech_links.append(link)
-        else:
             if "whatsapp.com" not in link:
-                misc_links.append(link)
+                tech_links.append(link)
+        # 'ignore' category is silently dropped
 
-    tweets_per_page = 6  # Fewer per page for better loading
-    total_tweet_pages = (len(twitter_links) + tweets_per_page - 1) // tweets_per_page
+    tweets_per_page = 6
+    total_tweet_pages = (len(twitter_links) + tweets_per_page - 1) // tweets_per_page if twitter_links else 0
 
     md_content = [
         "---",
@@ -72,19 +156,19 @@ def generate_site():
         "title: Bookmarks",
         "---",
         "",
-        "# Link Vault",
+        "# Bookmark Vault",
         "",
         "---",
         ""
     ]
 
+    # Twitter Section
     if twitter_links:
         md_content.append("## X / Twitter")
         md_content.append("")
         md_content.append(f'<p class="small-text">{len(twitter_links)} posts • Page <span id="current-page">1</span> of {total_tweet_pages}</p>')
         md_content.append("")
         
-        # CSS for tweet iframe grid
         md_content.append("""
 <style>
 .tweet-grid {
@@ -97,7 +181,6 @@ def generate_site():
   border-radius: 12px;
   overflow: hidden;
   background: #fff;
-  min-height: 250px;
 }
 .tweet-frame iframe {
   width: 100%;
@@ -138,17 +221,73 @@ def generate_site():
 .tweet-page.active { 
   display: block; 
 }
+/* Tech Links - Google Docs style */
+.link-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.link-card:hover {
+  border-color: #e06e2e;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.link-icon {
+  width: 40px;
+  height: 40px;
+  background: #e06e2e;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+.link-icon.github { background: #24292e; }
+.link-icon.medium { background: #000; }
+.link-icon.arxiv { background: #b31b1b; }
+.link-icon.hn { background: #ff6600; }
+.link-icon.notion { background: #000; }
+.link-icon.net { background: #512bd4; }
+.link-content {
+  flex: 1;
+  min-width: 0;
+}
+.link-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.link-desc {
+  color: #888;
+  font-size: 13px;
+}
+.link-source {
+  color: #e06e2e;
+  font-size: 12px;
+  margin-top: 4px;
+}
 @media (max-width: 768px) {
-  .tweet-grid {
-    grid-template-columns: 1fr;
-  }
+  .tweet-grid { grid-template-columns: 1fr; }
 }
 </style>
 """)
         
         md_content.append('<div id="twitter-section">')
         
-        # Generate pages with tweet iframes
         for page_num in range(total_tweet_pages):
             start_idx = page_num * tweets_per_page
             end_idx = min(start_idx + tweets_per_page, len(twitter_links))
@@ -159,7 +298,6 @@ def generate_site():
             md_content.append('<div class="tweet-grid">')
             
             for original_url, tweet_id in page_tweets:
-                # Use Twitter's embed iframe directly
                 iframe_url = f"https://platform.twitter.com/embed/Tweet.html?id={tweet_id}&theme=light"
                 md_content.append(f'''<div class="tweet-frame">
 <iframe src="{iframe_url}" loading="lazy" allowtransparency="true"></iframe>
@@ -171,7 +309,6 @@ def generate_site():
         md_content.append('<div class="page-nav" id="page-nav"></div>')
         md_content.append('</div>')
         
-        # Pagination JS
         md_content.append(f"""
 <script>
 (function() {{
@@ -181,9 +318,7 @@ def generate_site():
   const currentPageSpan = document.getElementById('current-page');
   
   function show(idx) {{
-    pages.forEach((p, i) => {{
-      p.classList.toggle('active', i === idx);
-    }});
+    pages.forEach((p, i) => p.classList.toggle('active', i === idx));
     render(idx);
     currentPageSpan.textContent = idx + 1;
     document.getElementById('twitter-section').scrollIntoView({{behavior: 'smooth', block: 'start'}});
@@ -191,7 +326,6 @@ def generate_site():
   
   function render(idx) {{
     nav.innerHTML = '';
-    
     const prev = document.createElement('button');
     prev.textContent = '← Previous';
     prev.disabled = idx === 0;
@@ -222,41 +356,60 @@ def generate_site():
 </script>
 """)
 
-    # Tech Section
+    # Tech Section - Google Docs style cards
     if tech_links:
         md_content.append("")
         md_content.append("---")
         md_content.append("")
-        md_content.append("## Tech & Engineering")
+        md_content.append("## Tech & Reading")
         md_content.append("")
-        md_content.append('<ul class="link-list">')
+        md_content.append(f'<p class="small-text">{len(tech_links)} links</p>')
+        md_content.append("")
+        md_content.append('<div class="tech-links">')
+        
         for link in tech_links:
-            domain = re.search(r'https?://(?:www\.)?([^/]+)', link)
-            domain_name = domain.group(1) if domain else link
-            md_content.append(f'<li><a href="{link}" target="_blank">{domain_name}</a></li>')
-        md_content.append('</ul>')
-
-    # Misc Section
-    if misc_links:
-        md_content.append("")
-        md_content.append("---")
-        md_content.append("")
-        md_content.append("## Other Links")
-        md_content.append("")
-        md_content.append('<ul class="link-list">')
-        for link in misc_links:
-            domain = re.search(r'https?://(?:www\.)?([^/]+)', link)
-            domain_name = domain.group(1) if domain else link
-            md_content.append(f'<li><a href="{link}" target="_blank">{domain_name}</a></li>')
-        md_content.append('</ul>')
+            info = extract_link_info(link)
+            
+            # Determine icon class
+            icon_class = ""
+            icon_text = info['source'][:2].upper()
+            if 'github' in link.lower():
+                icon_class = "github"
+                icon_text = "GH"
+            elif 'medium' in link.lower():
+                icon_class = "medium"
+                icon_text = "M"
+            elif 'arxiv' in link.lower():
+                icon_class = "arxiv"
+                icon_text = "Ar"
+            elif 'ycombinator' in link.lower():
+                icon_class = "hn"
+                icon_text = "YC"
+            elif 'notion' in link.lower():
+                icon_class = "notion"
+                icon_text = "N"
+            elif '.net' in link.lower():
+                icon_class = "net"
+                icon_text = ".N"
+            
+            md_content.append(f'''<a href="{link}" target="_blank" class="link-card">
+  <div class="link-icon {icon_class}">{icon_text}</div>
+  <div class="link-content">
+    <div class="link-title">{info['title']}</div>
+    <div class="link-desc">{info['description']}</div>
+    <div class="link-source">{info['source']}</div>
+  </div>
+</a>''')
+        
+        md_content.append('</div>')
 
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write("\n".join(md_content))
     
-    print(f"Generated bookmarks with {len(unique_links)} total links:")
+    print(f"Generated Bookmark Vault:")
     print(f"  - Twitter: {len(twitter_links)} ({total_tweet_pages} pages)")
     print(f"  - Tech: {len(tech_links)}")
-    print(f"  - Misc: {len(misc_links)}")
+    print(f"  - Ignored: {len(unique_links) - len(twitter_links) - len(tech_links)} misc links")
 
 if __name__ == "__main__":
     generate_site()
