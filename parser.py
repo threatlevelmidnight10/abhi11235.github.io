@@ -5,11 +5,9 @@ def classify_link(link):
     """Return category based on URL domain."""
     link_lower = link.lower()
     
-    # Twitter / X
     if 'twitter.com' in link_lower or 'x.com' in link_lower:
         return 'twitter'
     
-    # Tech / Dev
     tech_domains = [
         'github.com', 'stackoverflow.com', 'arxiv.org', 'huggingface.co', 
         'dev.to', 'medium.com', 'hashnode.com', 'kaggle.com', 
@@ -24,12 +22,22 @@ def classify_link(link):
             
     return 'misc'
 
-def extract_tweet_id(url):
-    """Extract tweet ID from URL for display."""
-    match = re.search(r'/status/(\d+)', url)
+def extract_tweet_info(url):
+    """Extract username and tweet ID from URL."""
+    # Pattern: twitter.com/username/status/id or x.com/username/status/id
+    match = re.search(r'(?:twitter\.com|x\.com)/([^/]+)/status/(\d+)', url)
     if match:
-        return match.group(1)
-    return None
+        username = match.group(1)
+        tweet_id = match.group(2)
+        if username != 'i':  # 'i' is the redirect format, not a real username
+            return username, tweet_id
+    
+    # Fallback: just get the ID
+    id_match = re.search(r'/status/(\d+)', url)
+    if id_match:
+        return None, id_match.group(1)
+    
+    return None, None
 
 def generate_site():
     input_file = './cht_history/_chat180626.txt'
@@ -47,8 +55,6 @@ def generate_site():
     raw_links = re.findall(url_pattern, content)
     clean_links = [link.strip(',').strip(')') for link in raw_links]
     unique_links = list(dict.fromkeys(clean_links))
-    
-    # Reverse: newest first
     unique_links.reverse()
 
     twitter_links = []
@@ -65,8 +71,7 @@ def generate_site():
             if "whatsapp.com" not in link:
                 misc_links.append(link)
 
-    # Pagination for Twitter (simple page-based)
-    tweets_per_page = 30
+    tweets_per_page = 24  # 4x6 grid works well
     total_tweet_pages = (len(twitter_links) + tweets_per_page - 1) // tweets_per_page
 
     md_content = [
@@ -81,30 +86,85 @@ def generate_site():
         ""
     ]
 
-    # Twitter Section with Pagination
+    # Twitter Section with Card Grid
     if twitter_links:
         md_content.append("## X / Twitter")
         md_content.append("")
-        md_content.append(f'<p class="small-text">{len(twitter_links)} posts</p>')
+        md_content.append(f'<p class="small-text">{len(twitter_links)} saved posts</p>')
         md_content.append("")
         
-        # Pagination Script
+        # Inline CSS for cards
         md_content.append("""
 <style>
-.tweet-list { list-style: none; padding: 0; }
-.tweet-list li { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
-.tweet-list li:last-child { border-bottom: none; }
-.tweet-list a { font-size: 14px; word-break: break-all; }
-.page-nav { margin: 30px 0; text-align: center; }
-.page-nav button { 
-  background: #fff; border: 1px solid #ddd; padding: 8px 16px; 
-  margin: 0 4px; cursor: pointer; border-radius: 4px; font-size: 14px;
+.tweet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 0;
+  list-style: none;
 }
-.page-nav button:hover { border-color: #e06e2e; color: #e06e2e; }
-.page-nav button.active { background: #e06e2e; color: white; border-color: #e06e2e; }
-.page-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
-.tweet-page { display: none; }
-.tweet-page.active { display: block; }
+.tweet-card {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+.tweet-card:hover {
+  border-color: #e06e2e;
+  box-shadow: 0 2px 8px rgba(224, 110, 46, 0.1);
+}
+.tweet-card a {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tweet-card .username {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+.tweet-card .post-label {
+  color: #888;
+  font-size: 12px;
+}
+.tweet-card .icon {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.page-nav { 
+  margin: 30px 0; 
+  text-align: center; 
+}
+.page-nav button { 
+  background: #fff; 
+  border: 1px solid #ddd; 
+  padding: 8px 16px; 
+  margin: 0 4px; 
+  cursor: pointer; 
+  border-radius: 4px; 
+  font-size: 14px;
+}
+.page-nav button:hover { 
+  border-color: #e06e2e; 
+  color: #e06e2e; 
+}
+.page-nav button.active { 
+  background: #e06e2e; 
+  color: white; 
+  border-color: #e06e2e; 
+}
+.page-nav button:disabled { 
+  opacity: 0.4; 
+  cursor: not-allowed; 
+}
+.tweet-page { 
+  display: none; 
+}
+.tweet-page.active { 
+  display: block; 
+}
 </style>
 """)
         
@@ -118,12 +178,23 @@ def generate_site():
             
             active = " active" if page_num == 0 else ""
             md_content.append(f'<div class="tweet-page{active}" data-page="{page_num}">')
-            md_content.append('<ul class="tweet-list">')
+            md_content.append('<ul class="tweet-grid">')
             
-            for link in page_tweets:
-                tweet_id = extract_tweet_id(link)
-                display_text = f"Tweet {tweet_id}" if tweet_id else link
-                md_content.append(f'<li><a href="{link}" target="_blank">{display_text}</a></li>')
+            for idx, link in enumerate(page_tweets, start=start_idx + 1):
+                username, tweet_id = extract_tweet_info(link)
+                
+                if username:
+                    display_name = f"@{username}"
+                else:
+                    display_name = f"Post #{idx}"
+                
+                md_content.append(f'''<li class="tweet-card">
+  <a href="{link}" target="_blank" rel="noopener">
+    <span class="icon">𝕏</span>
+    <span class="username">{display_name}</span>
+    <span class="post-label">View post →</span>
+  </a>
+</li>''')
             
             md_content.append('</ul>')
             md_content.append('</div>')
@@ -147,19 +218,18 @@ def generate_site():
     }});
     render(idx);
     current = idx;
+    document.getElementById('twitter-section').scrollIntoView({{behavior: 'smooth', block: 'start'}});
   }}
   
   function render(idx) {{
     nav.innerHTML = '';
     
-    // Prev
     const prev = document.createElement('button');
-    prev.textContent = '←';
+    prev.textContent = '← Prev';
     prev.disabled = idx === 0;
     prev.onclick = () => show(idx - 1);
     nav.appendChild(prev);
     
-    // Page numbers (show 5 around current)
     let start = Math.max(0, idx - 2);
     let end = Math.min(totalPages - 1, start + 4);
     if (end - start < 4) start = Math.max(0, end - 4);
@@ -172,9 +242,8 @@ def generate_site():
       nav.appendChild(btn);
     }}
     
-    // Next
     const next = document.createElement('button');
-    next.textContent = '→';
+    next.textContent = 'Next →';
     next.disabled = idx === totalPages - 1;
     next.onclick = () => show(idx + 1);
     nav.appendChild(next);
@@ -194,7 +263,10 @@ def generate_site():
         md_content.append("")
         md_content.append('<ul class="link-list">')
         for link in tech_links:
-            md_content.append(f'<li><a href="{link}" target="_blank">{link}</a></li>')
+            # Extract domain for display
+            domain = re.search(r'https?://(?:www\.)?([^/]+)', link)
+            domain_name = domain.group(1) if domain else link
+            md_content.append(f'<li><a href="{link}" target="_blank">{domain_name}</a></li>')
         md_content.append('</ul>')
 
     # Misc Section
@@ -206,7 +278,9 @@ def generate_site():
         md_content.append("")
         md_content.append('<ul class="link-list">')
         for link in misc_links:
-            md_content.append(f'<li><a href="{link}" target="_blank">{link}</a></li>')
+            domain = re.search(r'https?://(?:www\.)?([^/]+)', link)
+            domain_name = domain.group(1) if domain else link
+            md_content.append(f'<li><a href="{link}" target="_blank">{domain_name}</a></li>')
         md_content.append('</ul>')
 
     with open(output_file, 'w', encoding='utf-8') as f:
