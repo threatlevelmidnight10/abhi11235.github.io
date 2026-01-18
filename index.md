@@ -13,11 +13,7 @@ title: Abhishek Kulkarni
     </p>
 
     <p>
-      I currently work on building scalable systems and robust platforms. My interests lie in distributed systems, performance optimization, and developer tooling.
-    </p>
-
-    <p>
-      Previously, I have worked on [mention previous work here]. I graduated from [University Name].
+    I currently work on building scalable, reliable systems and enjoy working close to the core of how platforms perform. My interests include distributed systems, performance optimization, cloud and developer tooling. Recently, I’ve been hooked on learning LLM inference and experimenting with agent design and orchestration, which has been a lot of fun to learn.
     </p>
 
     <p style="margin-top: 20px;">
@@ -32,6 +28,20 @@ title: Abhishek Kulkarni
 </div>
 
 ---
+
+## Experience
+
+*   **DigitalOcean** (April 2025 - Present)
+    *   Senior Software Engineer (Hosting Platform Team - Cloudways)
+
+*   **Opendoor** (May 2024 - Feb 2025)
+    *   Senior Software Engineer (Developer Experience - Platform Team)
+
+*   **Freshworks** (Sept 2021 - May 2024)
+    *   Senior Software Engineer (Apps Platform, Marketplace Team)
+
+*   **Elastic.run** (July 2019 - Sept 2021)
+    *   Software Engineer (FMCG Distribution Platform)
 
 ## News
 
