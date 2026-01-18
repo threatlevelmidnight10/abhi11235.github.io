@@ -1,102 +1,12 @@
 import re
 import os
 
-# Client-side pagination script for Twitter section + Standard Twitter Widget
-PAGINATION_SCRIPT = '''
-<script>
-window.twttr = (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0],
-    t = window.twttr || {};
-  if (d.getElementById(id)) return t;
-  js = d.createElement(s);
-  js.id = id;
-  js.src = "https://platform.twitter.com/widgets.js";
-  fjs.parentNode.insertBefore(js, fjs);
-
-  t._e = [];
-  t.ready = function(f) {
-    t._e.push(f);
-  };
-
-  return t;
-}(document, "script", "twitter-wjs"));
-
-document.addEventListener('DOMContentLoaded', function() {
-  const pages = document.querySelectorAll('.tweet-page');
-  const paginationContainer = document.getElementById('pagination-controls');
-  
-  if (pages.length > 0) {
-    let currentPage = 0;
-    
-    function showPage(index) {
-      pages.forEach((page, i) => {
-        if (i === index) {
-          page.classList.add('active');
-          // Important: Trigger render on the active page
-          twttr.ready(function() {
-             twttr.widgets.load(page);
-          });
-        } else {
-          page.classList.remove('active');
-        }
-      });
-      updateButtons(index);
-      currentPage = index;
-    }
-
-    function updateButtons(index) {
-      paginationContainer.innerHTML = '';
-      
-      // Prev Button
-      const prevBtn = document.createElement('button');
-      prevBtn.innerText = '← Prev';
-      prevBtn.disabled = index === 0;
-      prevBtn.onclick = () => {
-         showPage(index - 1);
-         document.getElementById('twitter-section').scrollIntoView({behavior: 'smooth'});
-      };
-      paginationContainer.appendChild(prevBtn);
-
-      // Page Numbers (Window of 5)
-      let start = Math.max(0, index - 2);
-      let end = Math.min(pages.length - 1, start + 4);
-      if (end - start < 4) start = Math.max(0, end - 4);
-
-      for (let i = start; i <= end; i++) {
-        const btn = document.createElement('button');
-        btn.innerText = i + 1;
-        if (i === index) btn.classList.add('active');
-        btn.onclick = () => {
-            showPage(i);
-            document.getElementById('twitter-section').scrollIntoView({behavior: 'smooth'});
-        };
-        paginationContainer.appendChild(btn);
-      }
-
-      // Next Button
-      const nextBtn = document.createElement('button');
-      nextBtn.innerText = 'Next →';
-      nextBtn.disabled = index === pages.length - 1;
-      nextBtn.onclick = () => {
-          showPage(index + 1);
-          document.getElementById('twitter-section').scrollIntoView({behavior: 'smooth'});
-      };
-      paginationContainer.appendChild(nextBtn);
-    }
-
-    // Initial Load
-    showPage(0);
-  }
-});
-</script>
-'''
-
 def classify_link(link):
     """Return category based on URL domain."""
-    link = link.lower()
+    link_lower = link.lower()
     
     # Twitter / X
-    if 'twitter.com' in link or 'x.com' in link:
+    if 'twitter.com' in link_lower or 'x.com' in link_lower:
         return 'twitter'
     
     # Tech / Dev
@@ -104,22 +14,27 @@ def classify_link(link):
         'github.com', 'stackoverflow.com', 'arxiv.org', 'huggingface.co', 
         'dev.to', 'medium.com', 'hashnode.com', 'kaggle.com', 
         'news.ycombinator.com', 'python.org', 'docs.google.com', 
-        'youtube.com/playlist', 'youtu.be', 'youtube.com', # Assuming playlists/videos are often tech talks in context
-        'linkedin.com', 'jobs', 'careers' # Grouping jobs with tech/professional
+        'youtube.com', 'youtu.be',
+        'linkedin.com/jobs', 'linkedin.com/posts', 'careers'
     ]
     
     for domain in tech_domains:
-        if domain in link:
+        if domain in link_lower:
             return 'tech'
             
-    # Everything else
     return 'misc'
+
+def extract_tweet_id(url):
+    """Extract tweet ID from URL for display."""
+    match = re.search(r'/status/(\d+)', url)
+    if match:
+        return match.group(1)
+    return None
 
 def generate_site():
     input_file = './cht_history/_chat180626.txt'
     output_file = 'bookmarks.md'
     
-    # Matches URLs
     url_pattern = r'https?://\S+'
     
     if not os.path.exists(input_file):
@@ -129,19 +44,13 @@ def generate_site():
     with open(input_file, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Extract all links
     raw_links = re.findall(url_pattern, content)
-    
-    # Remove trailing punctuation (common in chat exports)
     clean_links = [link.strip(',').strip(')') for link in raw_links]
-    
-    # Deduplicate while preserving order (using dict)
     unique_links = list(dict.fromkeys(clean_links))
     
-    # REVERSE Logic: Newest links are usually at the bottom of chat logs
+    # Reverse: newest first
     unique_links.reverse()
 
-    # Categorize
     twitter_links = []
     tech_links = []
     misc_links = []
@@ -153,10 +62,13 @@ def generate_site():
         elif category == 'tech':
             tech_links.append(link)
         else:
-            if "whatsapp.com" not in link: # Filter noise
+            if "whatsapp.com" not in link:
                 misc_links.append(link)
 
-    # Begin Markdown Construction
+    # Pagination for Twitter (simple page-based)
+    tweets_per_page = 30
+    total_tweet_pages = (len(twitter_links) + tweets_per_page - 1) // tweets_per_page
+
     md_content = [
         "---",
         "layout: default",
@@ -164,44 +76,134 @@ def generate_site():
         "---",
         "",
         "# Link Vault",
-        "Curated from my personal chat history.",
         "",
         "---",
-        "",
-        PAGINATION_SCRIPT
+        ""
     ]
 
-    # SECTION 1: X / Twitter (Paginated)
+    # Twitter Section with Pagination
     if twitter_links:
+        md_content.append("## X / Twitter")
+        md_content.append("")
+        md_content.append(f'<p class="small-text">{len(twitter_links)} posts</p>')
+        md_content.append("")
+        
+        # Pagination Script
+        md_content.append("""
+<style>
+.tweet-list { list-style: none; padding: 0; }
+.tweet-list li { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+.tweet-list li:last-child { border-bottom: none; }
+.tweet-list a { font-size: 14px; word-break: break-all; }
+.page-nav { margin: 30px 0; text-align: center; }
+.page-nav button { 
+  background: #fff; border: 1px solid #ddd; padding: 8px 16px; 
+  margin: 0 4px; cursor: pointer; border-radius: 4px; font-size: 14px;
+}
+.page-nav button:hover { border-color: #e06e2e; color: #e06e2e; }
+.page-nav button.active { background: #e06e2e; color: white; border-color: #e06e2e; }
+.page-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
+.tweet-page { display: none; }
+.tweet-page.active { display: block; }
+</style>
+""")
+        
         md_content.append('<div id="twitter-section">')
-        md_content.append('<h3 class="category-header">X / Twitter Updates</h3>')
         
-        chunk_size = 20
-        # Split into chunks
-        page_chunks = [twitter_links[i:i + chunk_size] for i in range(0, len(twitter_links), chunk_size)]
-        
-        for i, chunk in enumerate(page_chunks):
-            # Page container
-            active_class = " active" if i == 0 else ""
-            md_content.append(f'<div class="tweet-page{active_class}" id="page-{i}">')
-            for link in chunk:
-                md_content.append(f'<blockquote class="twitter-tweet"><a href="{link}"></a></blockquote>')
-            md_content.append('</div>')
+        # Generate pages
+        for page_num in range(total_tweet_pages):
+            start_idx = page_num * tweets_per_page
+            end_idx = min(start_idx + tweets_per_page, len(twitter_links))
+            page_tweets = twitter_links[start_idx:end_idx]
             
-        md_content.append('<div id="pagination-controls" class="pagination"></div>')
+            active = " active" if page_num == 0 else ""
+            md_content.append(f'<div class="tweet-page{active}" data-page="{page_num}">')
+            md_content.append('<ul class="tweet-list">')
+            
+            for link in page_tweets:
+                tweet_id = extract_tweet_id(link)
+                display_text = f"Tweet {tweet_id}" if tweet_id else link
+                md_content.append(f'<li><a href="{link}" target="_blank">{display_text}</a></li>')
+            
+            md_content.append('</ul>')
+            md_content.append('</div>')
+        
+        # Pagination controls
+        md_content.append('<div class="page-nav" id="page-nav"></div>')
         md_content.append('</div>')
+        
+        # Pagination JS
+        md_content.append(f"""
+<script>
+(function() {{
+  const totalPages = {total_tweet_pages};
+  const pages = document.querySelectorAll('.tweet-page');
+  const nav = document.getElementById('page-nav');
+  let current = 0;
+  
+  function show(idx) {{
+    pages.forEach((p, i) => {{
+      p.classList.toggle('active', i === idx);
+    }});
+    render(idx);
+    current = idx;
+  }}
+  
+  function render(idx) {{
+    nav.innerHTML = '';
+    
+    // Prev
+    const prev = document.createElement('button');
+    prev.textContent = '←';
+    prev.disabled = idx === 0;
+    prev.onclick = () => show(idx - 1);
+    nav.appendChild(prev);
+    
+    // Page numbers (show 5 around current)
+    let start = Math.max(0, idx - 2);
+    let end = Math.min(totalPages - 1, start + 4);
+    if (end - start < 4) start = Math.max(0, end - 4);
+    
+    for (let i = start; i <= end; i++) {{
+      const btn = document.createElement('button');
+      btn.textContent = i + 1;
+      if (i === idx) btn.classList.add('active');
+      btn.onclick = () => show(i);
+      nav.appendChild(btn);
+    }}
+    
+    // Next
+    const next = document.createElement('button');
+    next.textContent = '→';
+    next.disabled = idx === totalPages - 1;
+    next.onclick = () => show(idx + 1);
+    nav.appendChild(next);
+  }}
+  
+  render(0);
+}})();
+</script>
+""")
 
-    # SECTION 2: Tech & Dev
+    # Tech Section
     if tech_links:
-        md_content.append('<h3 class="category-header">Tech, AI & Engineering</h3>')
+        md_content.append("")
+        md_content.append("---")
+        md_content.append("")
+        md_content.append("## Tech & Engineering")
+        md_content.append("")
         md_content.append('<ul class="link-list">')
         for link in tech_links:
             md_content.append(f'<li><a href="{link}" target="_blank">{link}</a></li>')
         md_content.append('</ul>')
 
-    # SECTION 3: Misc
+    # Misc Section
     if misc_links:
-        md_content.append('<h3 class="category-header">Miscellaneous</h3>')
+        md_content.append("")
+        md_content.append("---")
+        md_content.append("")
+        md_content.append("## Other Links")
+        md_content.append("")
         md_content.append('<ul class="link-list">')
         for link in misc_links:
             md_content.append(f'<li><a href="{link}" target="_blank">{link}</a></li>')
@@ -210,10 +212,10 @@ def generate_site():
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write("\n".join(md_content))
     
-    print(f"Site updated with {len(unique_links)} total links.")
-    print(f"- Twitter: {len(twitter_links)} ({len(page_chunks)} pages)")
-    print(f"- Tech: {len(tech_links)}")
-    print(f"- Misc: {len(misc_links)}")
+    print(f"Generated bookmarks with {len(unique_links)} links:")
+    print(f"  - Twitter: {len(twitter_links)} ({total_tweet_pages} pages)")
+    print(f"  - Tech: {len(tech_links)}")
+    print(f"  - Misc: {len(misc_links)}")
 
 if __name__ == "__main__":
     generate_site()
