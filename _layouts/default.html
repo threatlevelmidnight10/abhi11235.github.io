@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ page.title | default: site.title }}</title>
-  <meta name="description" content="{{ site.description }}">
-  
-  <!-- CSS -->
-  <link rel="stylesheet" href="{{ "/assets/css/style.css" | relative_url }}">
-  
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title | default: site.title }}</title>
+    <meta name="description" content="{{ site.description }}">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ " /assets/css/style.css" | relative_url }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <body>
 
-  <div class="container">
-    <header>
-      <div class="nav-icons">
-        <a href="mailto:your-email@example.com" title="Email"><i class="fa-solid fa-envelope"></i></a>
-        <a href="#" title="Google Scholar"><i class="fa-brands fa-google"></i></a>
-        <a href="https://github.com/threatlevelmidnight10" title="GitHub"><i class="fa-brands fa-github"></i></a>
-        <a href="#" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
-        <a href="https://x.com" title="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-      </div>
-      
-      <nav class="nav-links">
-        <a href="{{ "/" | relative_url }}">about</a>
-        <a href="{{ "/bookmarks" | relative_url }}">bookmarks</a>
-        <a href="#">projects</a>
-        <a href="#">publications</a>
-      </nav>
-    </header>
+    <div class="container">
+        <header>
+            <div class="nav-icons">
+                <a href="mailto:ravikumarabhishek10@gmail.com" title="Email"><i class="fa-solid fa-envelope"></i></a>
+                <a href="https://github.com/threatlevelmidnight10" title="GitHub"><i
+                        class="fa-brands fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/abhishekleo10/" title="LinkedIn"><i
+                        class="fa-brands fa-linkedin"></i></a>
+                <a href="https://x.com/grok_cto" title="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
 
-    <main>
-      {{ content }}
-    </main>
+            <nav class="nav-links">
+                <a href="{{ " /" | relative_url }}">about</a>
+                <a href="{{ " /bookmarks" | relative_url }}">bookmarks</a>
+                <a href="https://github.com/threatlevelmidnight10">projects <span
+                        style="font-size:10px;color:#888;">(WIP)</span></a>
+            </nav>
+        </header>
 
-    <footer>
-      <!-- Optional Footer -->
-    </footer>
-  </div>
+        <main>
+            {{ content }}
+        </main>
+
+        <footer>
+            <!-- Optional Footer -->
+        </footer>
+    </div>
 
 </body>
+
 </html>
