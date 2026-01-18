@@ -31,16 +31,16 @@ title: Abhishek Kulkarni
 
 ## Experience
 
-*   **DigitalOcean** (April 2025 - Present)
+*   **[DigitalOcean](https://www.digitalocean.com/)** (April 2025 - Present)
     *   Senior Software Engineer (Hosting Platform Team - Cloudways)
 
-*   **Opendoor** (May 2024 - Feb 2025)
+*   **[Opendoor](https://www.opendoor.com/)** (May 2024 - Feb 2025)
     *   Senior Software Engineer (Developer Experience - Platform Team)
 
-*   **Freshworks** (Sept 2021 - May 2024)
+*   **[Freshworks](https://www.freshworks.com/)** (Sept 2021 - May 2024)
     *   Senior Software Engineer (Apps Platform, Marketplace Team)
 
-*   **Elastic.run** (July 2019 - Sept 2021)
+*   **[Elastic.run](https://www.elastic.run/)** (July 2019 - Sept 2021)
     *   Software Engineer (FMCG Distribution Platform)
 
 ## News
